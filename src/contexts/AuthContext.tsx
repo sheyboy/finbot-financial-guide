@@ -22,16 +22,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set up auth state listener
+    // First set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
+        console.log('Auth state changed:', event);
         setSession(newSession);
         setUser(newSession?.user ?? null);
       }
     );
 
-    // Get initial session
+    // Then get initial session
     supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      console.log('Initial session:', initialSession ? 'exists' : 'none');
       setSession(initialSession);
       setUser(initialSession?.user ?? null);
       setLoading(false);
@@ -48,9 +50,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
       toast({ 
         title: "Success", 
-        description: "Please check your email for verification." 
+        description: "Account created! Please check your email for verification." 
       });
     } catch (error: any) {
+      console.error('Signup error:', error.message);
       toast({ 
         title: "Error", 
         description: error.message || "Failed to sign up", 
@@ -66,6 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
       toast({ title: "Success", description: "Logged in successfully" });
     } catch (error: any) {
+      console.error('Login error:', error.message);
       toast({ 
         title: "Error", 
         description: error.message || "Failed to sign in", 
@@ -81,6 +85,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
       toast({ title: "Success", description: "Signed out successfully" });
     } catch (error: any) {
+      console.error('Signout error:', error.message);
       toast({ 
         title: "Error", 
         description: error.message || "Failed to sign out", 

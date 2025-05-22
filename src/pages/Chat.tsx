@@ -3,14 +3,32 @@ import React from 'react';
 import Header from '@/components/layout/Header';
 import Navigation from '@/components/layout/Navigation';
 import FinBot from '@/components/chat/FinBot';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useEffect } from 'react';
 
 const Chat = () => {
   const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Use effect to handle navigation based on auth state
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth', { replace: true });
+    }
+  }, [user, loading, navigate]);
+
+  // Show loading state while authentication is being checked
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen items-center justify-center">
+        <p className="text-lg">Loading...</p>
+      </div>
+    );
+  }
 
   // Redirect to login if not authenticated
-  if (!loading && !user) {
+  if (!user) {
     return <Navigate to="/auth" replace />;
   }
 

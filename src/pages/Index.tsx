@@ -1,5 +1,6 @@
 
-import React from "react";
+import React, { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Navigation from "@/components/layout/Navigation";
 import BalanceCard from "@/components/dashboard/BalanceCard";
@@ -12,8 +13,16 @@ import {
   mockSpendingData, 
   mockBudgets 
 } from "@/services/mockData";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { user, loading } = useAuth();
+
+  // Redirect to login if not authenticated
+  if (!loading && !user) {
+    return <Navigate to="/auth" replace />;
+  }
+
   return (
     <div className="flex flex-col min-h-screen pb-16">
       <Header />
